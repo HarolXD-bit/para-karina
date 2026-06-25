@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Con mucho amor para ti 💕</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ================================================
+         COLORES — EDITABLE
+      ================================================ */
+      --color-fondo:       #0d0508;
+      --color-primario:    #c0395a;
+      --color-secundario:  #e8a0b0;
+      --color-dorado:      #d4a853;
+      --color-texto:       #f5e6ea;
+      --color-tenue:       #a07080;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--color-fondo);
+      color: var(--color-texto);
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── Cursor corazón ── */
+    #cursor {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-size: 20px;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ── Canvas pétalos ── */
+    #canvas-petals {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* ================================================
+       FOTO DE PORTADA EN EL HERO — EDITABLE
+       Cambia el src de la imagen de fondo aquí abajo
+       en el div #hero-foto
+    ================================================ */
+    #hero-foto {
+      position: absolute;
+      inset: 0;
+      background-image: url('imagenes/a.jpg');
+      background-size: cover;
+      background-position: center top;
+      opacity: 0.18;
+      z-index: 0;
+    }
+
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(192,57,90,0.2) 0%, rgba(13,5,8,0.7) 70%);
+      z-index: 1;
+    }
+
+    #hero > * { position: relative; z-index: 2; }
+
+    .hero-etiqueta {
+      font-size: 0.85rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--color-dorado);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.3s forwards;
+    }
+
+    .hero-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 400;
+      line-height: 1.1;
+      opacity: 0;
+      animation: fadeUp 1s 0.6s forwards;
+    }
+    .hero-titulo span { color: var(--color-primario); }
+
+    .hero-y {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      color: var(--color-dorado);
+      margin: 0.3rem 0;
+      opacity: 0;
+      animation: fadeUp 1s 0.9s forwards;
+    }
+
+    .hero-subtitulo {
+      margin-top: 1.5rem;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      letter-spacing: 0.2em;
+      color: var(--color-secundario);
+      opacity: 0;
+      animation: fadeUp 1s 1.2s forwards;
+    }
+
+    .hero-separador {
+      margin: 2rem auto;
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--color-dorado), transparent);
+      opacity: 0;
+      animation: fadeUp 1s 1.5s forwards;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--color-tenue);
+      animation: bounce 2s infinite;
+      z-index: 2;
+    }
+
+    /* ── Sección label ── */
+    .seccion-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--color-dorado);
+      margin-bottom: 1rem;
+    }
+
+    /* ── CONTADOR ── */
+    #contador {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 2rem;
+      text-align: center;
+      background: linear-gradient(to bottom, transparent, rgba(192,57,90,0.07), transparent);
+    }
+
+    .contador-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      margin-bottom: 3rem;
+      color: var(--color-secundario);
+    }
+
+    .contador-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .contador-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(192,57,90,0.3);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      min-width: 110px;
+      backdrop-filter: blur(6px);
+    }
+
+    .contador-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      color: var(--color-primario);
+      display: block;
+    }
+
+    .contador-etq {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--color-tenue);
+    }
+
+    /* ── TIMELINE ── */
+    #historia {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    #historia h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      text-align: center;
+      margin-bottom: 3rem;
+      font-style: italic;
+    }
+
+    .timeline { position: relative; padding-left: 2rem; }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--color-primario), var(--color-dorado), var(--color-primario));
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 3rem;
+      padding-left: 1.5rem;
+    }
+
+    .timeline-item::before {
+      content: '🌹';
+      position: absolute;
+      left: -1.1rem;
+      top: 0;
+      font-size: 1.2rem;
+    }
+
+    .timeline-fecha {
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--color-dorado);
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 0.4rem;
+      color: var(--color-secundario);
+    }
+
+    .timeline-texto {
+      color: var(--color-tenue);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* ── PROMESAS ── */
+    #promesas {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    #promesas h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-style: italic;
+      margin-bottom: 3rem;
+    }
+
+    .promesas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .promesa-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(192,57,90,0.25);
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .promesa-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(192,57,90,0.3);
+    }
+
+    .promesa-icono { font-size: 2rem; margin-bottom: 1rem; }
+
+    .promesa-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--color-secundario);
+      margin-bottom: 0.8rem;
+    }
+
+    .promesa-card p {
+      font-size: 0.9rem;
+      color: var(--color-tenue);
+      line-height: 1.7;
+    }
+
+    /* ── ÁLBUM DE FOTOS ── */
+    #galeria {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 2rem;
+      text-align: center;
+    }
+
+    .galeria-header { margin-bottom: 3rem; }
+
+    .galeria-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-style: italic;
+    }
+
+    /* Escenario 3D del álbum */
+    .album-escena {
+      perspective: 1200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 520px;
+      position: relative;
+    }
+
+    /* Marco del álbum (libro) */
+    .album-libro {
+      position: relative;
+      width: min(420px, 90vw);
+      height: min(480px, 80vw);
+    }
+
+    /* Cada página / foto */
+    .album-pagina {
+      position: absolute;
+      inset: 0;
+      border-radius: 4px 16px 16px 4px;
+      overflow: hidden;
+      box-shadow:
+        -6px 0 20px rgba(0,0,0,0.5),
+         4px 4px 30px rgba(192,57,90,0.25);
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.645,0.045,0.355,1.000),
+                  opacity 0.4s ease;
+      opacity: 0;
+      pointer-events: none;
+      background: #1a0810;
+      border: 1px solid rgba(192,57,90,0.3);
+    }
+
+    .album-pagina.activa {
+      opacity: 1;
+      pointer-events: auto;
+      transform: rotateY(0deg);
+      z-index: 10;
+    }
+
+    /* Entrando desde la derecha (siguiente) */
+    .album-pagina.entrando-der {
+      opacity: 0;
+      transform: rotateY(-30deg) translateX(30px);
+      z-index: 9;
+    }
+
+    /* Saliendo hacia la izquierda (pasar página) */
+    .album-pagina.saliendo-izq {
+      opacity: 0;
+      transform: rotateY(-75deg);
+      z-index: 8;
+    }
+
+    /* Entrando desde la izquierda (anterior) */
+    .album-pagina.entrando-izq {
+      opacity: 0;
+      transform: rotateY(30deg) translateX(-30px);
+      z-index: 9;
+    }
+
+    /* Saliendo hacia la derecha (retroceder) */
+    .album-pagina.saliendo-der {
+      opacity: 0;
+      transform: rotateY(75deg);
+      z-index: 8;
+    }
+
+    .album-pagina img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Brillo en el borde izquierdo tipo encuadernado */
+    .album-pagina::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 18px;
+      background: linear-gradient(to right, rgba(0,0,0,0.5), transparent);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Número de foto */
+    .album-contador {
+      position: absolute;
+      bottom: 0.6rem;
+      right: 0.8rem;
+      background: rgba(13,5,8,0.7);
+      color: var(--color-dorado);
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      letter-spacing: 0.1em;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    /* Botones de navegación del álbum */
+    .album-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .album-btn {
+      background: rgba(192,57,90,0.2);
+      border: 1px solid rgba(192,57,90,0.5);
+      color: var(--color-secundario);
+      font-size: 1.5rem;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .album-btn:hover {
+      background: rgba(192,57,90,0.5);
+      transform: scale(1.1);
+    }
+
+    .album-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+      transform: none;
+    }
+
+    /* Miniaturas de navegación */
+    .album-puntos {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 1.5rem;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .album-punto {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(192,57,90,0.25);
+      border: 1px solid rgba(192,57,90,0.4);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .album-punto.activo {
+      background: var(--color-primario);
+      transform: scale(1.4);
+    }
+
+    /* ── Portada y contraportada ── */
+    .album-portada {
+      background: linear-gradient(145deg, #1a0510 0%, #2e0a1a 50%, #1a0510 100%);
+      border: 2px solid rgba(212,168,83,0.4);
+    }
+
+    .album-contraportada {
+      background: linear-gradient(145deg, #0d0508 0%, #1e0812 50%, #0d0508 100%);
+      border: 2px solid rgba(192,57,90,0.4);
+    }
+
+    .portada-contenido {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* Patrón de fondo sutil en la portada */
+    .album-portada::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(212,168,83,0.06) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .portada-contenido > * { position: relative; z-index: 1; }
+
+    .portada-subtitulo {
+      font-size: 0.7rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--color-dorado);
+      margin-bottom: 1.2rem;
+    }
+
+    .portada-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 10vw, 4rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--color-dorado);
+      text-shadow: 0 2px 20px rgba(212,168,83,0.4);
+      margin-bottom: 0.8rem;
+    }
+
+    .portada-separador {
+      width: 50px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--color-dorado), transparent);
+      margin: 0.8rem auto;
+    }
+
+    .portada-nombres {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--color-secundario);
+      margin-bottom: 0.3rem;
+    }
+
+    .portada-fecha {
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--color-tenue);
+    }
+
+    .portada-rosa {
+      font-size: 2.5rem;
+      margin: 0.8rem 0;
+      filter: drop-shadow(0 2px 8px rgba(192,57,90,0.5));
+    }
+
+    .contraportada-texto {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(0.95rem, 3vw, 1.15rem);
+      color: var(--color-secundario);
+      line-height: 2;
+    }
+
+    /* Sombra del libro en el fondo */
+    .album-sombra {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(380px, 80vw);
+      height: 30px;
+      background: radial-gradient(ellipse at center, rgba(192,57,90,0.3) 0%, transparent 70%);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+
+    /* ── CARTA ── */
+    #carta {
+      position: relative;
+      z-index: 1;
+      padding: 6rem 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .sobre-wrapper { cursor: pointer; margin-bottom: 3rem; }
+
+    .sobre {
+      width: 120px; height: 80px;
+      margin: 0 auto 1rem;
+      filter: drop-shadow(0 4px 20px rgba(192,57,90,0.5));
+    }
+
+    .sobre-hint {
+      font-size: 0.8rem;
+      color: var(--color-tenue);
+      letter-spacing: 0.2em;
+    }
+
+    .carta-contenido {
+      display: none;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(192,57,90,0.25);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: left;
+      line-height: 1.9;
+      font-size: 1.05rem;
+      animation: fadeUp 0.6s forwards;
+    }
+
+    .carta-contenido.visible { display: block; }
+    .carta-contenido p { margin-bottom: 1.2rem; color: var(--color-texto); }
+
+    .carta-contenido .firma {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--color-primario);
+      text-align: right;
+      margin-top: 1.5rem;
+    }
+
+    /* ── VIDEO ── */
+    #video-seccion {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    #video-seccion h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-style: italic;
+      margin-bottom: 2rem;
+    }
+
+    .video-container {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(192,57,90,0.3);
+      box-shadow: 0 8px 40px rgba(192,57,90,0.2);
+    }
+
+    .video-container video {
+      width: 100%;
+      display: block;
+      max-height: 70vh;
+      object-fit: contain;
+      background: #000;
+    }
+
+    /* ── BOTÓN AMOR ── */
+    #seccion-amor {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 2rem;
+      text-align: center;
+    }
+
+    .boton-amor {
+      background: linear-gradient(135deg, var(--color-primario), #8b1a35);
+      border: none;
+      color: white;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      padding: 1.2rem 3rem;
+      border-radius: 50px;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      box-shadow: 0 4px 25px rgba(192,57,90,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .boton-amor:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 40px rgba(192,57,90,0.6);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 3rem 2rem;
+      text-align: center;
+      border-top: 1px solid rgba(192,57,90,0.15);
+    }
+
+    footer p { font-size: 0.85rem; color: var(--color-tenue); letter-spacing: 0.2em; }
+
+    footer .grande {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      color: var(--color-primario);
+      margin-bottom: 1rem;
+    }
+
+    /* ── ANIMACIONES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+    @keyframes floatUp {
+      0%   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%,-200%) scale(0.4); }
+    }
+    @keyframes caer {
+      0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(110vh) rotate(360deg); }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s, transform 0.7s;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .spin { animation: spin 2s linear infinite; display: inline-block; }
+
+    @media (max-width: 600px) {
+      .contador-grid { gap: 0.8rem; }
+      .contador-item { padding: 1rem 1.2rem; min-width: 80px; }
+      .galeria-grid { grid-template-columns: repeat(2, 1fr); }
+      #lightbox-prev { left: 0.3rem; }
+      #lightbox-next { right: 0.3rem; }
+      .promesas-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Cursor corazón -->
+<div id="cursor">❤️</div>
+
+<!-- Canvas pétalos de rosa -->
+<canvas id="canvas-petals"></canvas>
+
+
+<!-- ====================================================
+     HERO
+     EDITABLE: nombres, etiqueta superior, fechas
+     EDITABLE: foto de fondo → cambiar url() en #hero-foto
+==================================================== -->
+<section id="hero">
+  <!-- EDITABLE: cambia url('imagenes/a.jpg') por tu foto favorita -->
+  <div id="hero-foto"></div>
+
+  <!-- EDITABLE: texto encima de los nombres -->
+  <p class="hero-etiqueta">✦ Dos años de amor ✦</p>
+
+  <!-- EDITABLE: nombres -->
+  <h1 class="hero-titulo"><span>Karina</span></h1>
+  <p class="hero-y">&amp;</p>
+  <h1 class="hero-titulo"><span>Harol</span></h1>
+
+  <div class="hero-separador"></div>
+
+  <!-- EDITABLE: fechas visibles -->
+  <p class="hero-subtitulo">25 de junio, 2024 — 25 de junio, 2026</p>
+
+  <p class="scroll-hint">↓ &nbsp; scroll &nbsp; ↓</p>
+</section>
+
+<!-- ====================================================
+     CONTADOR EN TIEMPO REAL
+==================================================== -->
+<section id="contador">
+  <p class="seccion-label">✦ Llevamos juntos ✦</p>
+  <!-- EDITABLE: subtítulo -->
+  <h2 class="contador-titulo reveal">Cada segundo a tu lado cuenta</h2>
+  <div class="contador-grid">
+    <div class="contador-item reveal"><span class="contador-num" id="cnt-years">0</span><span class="contador-etq">Años</span></div>
+    <div class="contador-item reveal"><span class="contador-num" id="cnt-months">0</span><span class="contador-etq">Meses</span></div>
+    <div class="contador-item reveal"><span class="contador-num" id="cnt-days">0</span><span class="contador-etq">Días</span></div>
+    <div class="contador-item reveal"><span class="contador-num" id="cnt-hours">0</span><span class="contador-etq">Horas</span></div>
+    <div class="contador-item reveal"><span class="contador-num" id="cnt-minutes">0</span><span class="contador-etq">Minutos</span></div>
+    <div class="contador-item reveal"><span class="contador-num" id="cnt-seconds">0</span><span class="contador-etq">Segundos</span></div>
+  </div>
+</section>
+
+<!-- ====================================================
+     NUESTRA HISTORIA — TIMELINE
+     Para añadir un momento: copia un .timeline-item completo
+==================================================== -->
+<section id="historia">
+  <h2 class="reveal">Nuestra historia</h2>
+  <div class="timeline">
+
+    <div class="timeline-item reveal">
+      <!-- EDITABLE: fecha, título y texto de cada momento -->
+      <p class="timeline-fecha">25 de Junio, 2024</p>
+      <h3 class="timeline-titulo">El comienzo de todo ❤️</h3>
+      <p class="timeline-texto">Nos hicimos novios , el día que empezó nuestra historia.</p>
+    </div>
+
+    <div class="timeline-item reveal">
+      <p class="timeline-fecha">23 de Marzo, 2025</p>
+      <h3 class="timeline-titulo">Primer concierto juntos 🎶</h3>
+      <p class="timeline-texto"><!-- EDITABLE: describe este momento --></p>
+    </div>
+
+    <div class="timeline-item reveal">
+      <p class="timeline-fecha">13 de Junio, 2025</p>
+      <h3 class="timeline-titulo">Tu cumpleaños 🎂</h3>
+      <p class="timeline-texto"><!-- EDITABLE: algo especial de ese día --></p>
+    </div>
+
+    <div class="timeline-item reveal">
+      <p class="timeline-fecha">25 de Junio, 2025</p>
+      <h3 class="timeline-titulo">Primer aniversario 💍</h3>
+      <p class="timeline-texto"><!-- EDITABLE: ¿cómo lo celebraron? --></p>
+    </div>
+
+    <div class="timeline-item reveal">
+      <p class="timeline-fecha">12 de Julio, 2025</p>
+      <h3 class="timeline-titulo">Fuimos a ver nuestro primer musical🎶</h3>
+      <p class="timeline-texto">Heathers por si lo olvidaste.</p>
+    </div>
+
+    <div class="timeline-item reveal">
+      <p class="timeline-fecha">14 de Agosto, 2025</p>
+      <h3 class="timeline-titulo">Fuimos a donar sangre</h3>
+      <p class="timeline-texto">Casi te desmayas jeje.</p>
+    </div>
+
+    <div class="timeline-item reveal">
+      <p class="timeline-fecha">24 de Octubre, 2025</p>
+      <h3 class="timeline-titulo">Segundo concierto🎶</h3>
+      <p class="timeline-texto">Este si le sabiamos mas canciones.</p>
+    </div>
+
+    <div class="timeline-item reveal">
+      <p class="timeline-fecha">19 de Diciembre, 2025</p>
+      <h3 class="timeline-titulo">Me acompañaste en uno de mis logros</h3>
+      <p class="timeline-texto">Mi graduacion, no lo hubiera logrado sin tu apoyo.</p>
+    </div>
+
+    <div class="timeline-item reveal">
+      <p class="timeline-fecha">24 de Abril, 2026</p>
+      <h3 class="timeline-titulo">El principio de nuestros viajes</h3>
+      <p class="timeline-texto">La primera vez que viajamos por mas de 1 dia xd.</p>
+    </div>
+
+  </div>
+    <!-- EDITABLE: agrega más momentos aquí copiando el bloque de arriba -->
+
+    <div class="timeline-item reveal">
+      <p class="timeline-fecha">25 de Junio, 2026</p>
+      <h3 class="timeline-titulo">¡Dos años juntos! 🌹</h3>
+      <p class="timeline-texto">Y aquí seguimos, escribiendo nuestra historia cada día.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================================================
+     PROMESAS
+     EDITABLE: cambia el texto de cada promesa,
+     agrega más .promesa-card si quieres
+==================================================== -->
+<section id="promesas">
+  <p class="seccion-label reveal">✦ Mis promesas para ti ✦</p>
+  <h2 class="reveal">Lo que te prometo</h2>
+
+  <div class="promesas-grid">
+
+    <div class="promesa-card reveal">
+      <!-- EDITABLE: icono, título y texto de cada promesa -->
+      <div class="promesa-icono">❤️</div>
+      <h3>Amarte cada día más</h3>
+      <p>Prometo amarte en las buenas y en las malas, con todo mi corazón, sin importar lo que venga.</p>
+    </div>
+
+    <div class="promesa-card reveal">
+      <div class="promesa-icono">🤝</div>
+      <h3>Ser tu apoyo</h3>
+      <p>Estaré aquí siempre que me necesites, como tu compañero, tu amigo y tu amor.</p>
+    </div>
+
+    <div class="promesa-card reveal">
+      <div class="promesa-icono">😄</div>
+      <h3>Hacerte sonreír</h3>
+      <p>Prometo llenar tu vida de risas, de momentos felices y de razones para sonreír cada día.</p>
+    </div>
+
+    <div class="promesa-card reveal">
+      <div class="promesa-icono">🌹</div>
+      <h3>Nunca darte por sentada</h3>
+      <p>Prometo valorarte y recordarte cada día lo especial que eres para mí.</p>
+    </div>
+
+    <div class="promesa-card reveal">
+      <div class="promesa-icono">✨</div>
+      <h3>Crecer juntos</h3>
+      <p>Prometo ser mejor cada día, por mí y por nosotros, para que este amor siga creciendo.</p>
+    </div>
+
+    <div class="promesa-card reveal">
+      <div class="promesa-icono">🌟</div>
+      <!-- EDITABLE: agrega una promesa extra tuya -->
+      <h3>  Consentirte siempre</h3>
+      <p>Prometo consentirte en todo lo que quieras y todo lo que necesites para que te sientas la mujer mas amada de este mundo</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================================================
+     ÁLBUM DE FOTOS — 24 imágenes
+     EDITABLE: cambia los src de cada .album-pagina img
+     para usar las fotos que prefieras
+==================================================== -->
+<section id="galeria">
+  <div class="galeria-header reveal">
+    <p class="seccion-label">✦ Nuestros momentos ✦</p>
+    <h2>Memorias que atesoro</h2>
+  </div>
+
+  <div class="album-escena reveal">
+    <div class="album-libro" id="album-libro">
+
+      <!-- PORTADA -->
+      <div class="album-pagina activa album-portada">
+        <div class="portada-contenido">
+          <p class="portada-subtitulo">✦ nuestro álbum ✦</p>
+          <h2 class="portada-titulo">24<br/>meses<br/>juntos</h2>
+          <div class="portada-separador"></div>
+          <!-- EDITABLE: nombres en la portada -->
+          <p class="portada-nombres">Karina &amp; Harol</p>
+          <p class="portada-fecha">2024 — 2026</p>
+          <div class="portada-rosa">🌹</div>
+        </div>
+      </div>
+
+      <div class="album-pagina"><img src="imagenes/1.jpg"  alt="foto 1"/><span class="album-contador">1 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/2.jpg"  alt="foto 2"/><span class="album-contador">2 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/3.jpg"  alt="foto 3"/><span class="album-contador">3 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/4.jpg"  alt="foto 4"/><span class="album-contador">4 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/5.jpg"  alt="foto 5"/><span class="album-contador">5 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/6.jpg"  alt="foto 6"/><span class="album-contador">6 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/b.jpg"  alt="foto 7"/><span class="album-contador">7 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/8.jpg"  alt="foto 8"/><span class="album-contador">8 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/9.jpg"  alt="foto 9"/><span class="album-contador">9 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/10.jpg" alt="foto 10"/><span class="album-contador">10 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/11.jpg" alt="foto 11"/><span class="album-contador">11 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/a.jpg"  alt="foto 12"/><span class="album-contador">12 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari1.jpeg"  alt="foto 13"/><span class="album-contador">13 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/n.jpg"  alt="foto 14"/><span class="album-contador">14 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari3.jpeg"  alt="foto 15"/><span class="album-contador">15 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari4.jpeg"  alt="foto 16"/><span class="album-contador">16 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari5.jpeg"  alt="foto 17"/><span class="album-contador">17 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari6.jpeg"  alt="foto 18"/><span class="album-contador">18 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari7.jpeg"  alt="foto 19"/><span class="album-contador">19 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari13.jpeg"  alt="foto 20"/><span class="album-contador">20 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari9.jpeg"  alt="foto 21"/><span class="album-contador">21 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari10.jpeg"  alt="foto 22"/><span class="album-contador">22 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari11.jpeg"  alt="foto 23"/><span class="album-contador">23 / 24</span></div>
+      <div class="album-pagina"><img src="imagenes/kari12.jpeg"  alt="foto 24"/><span class="album-contador">24 / 24</span></div>
+
+      <!-- CONTRAPORTADA -->
+      <div class="album-pagina album-contraportada">
+        <div class="portada-contenido">
+          <div class="portada-rosa">🌹</div>
+          <div class="portada-separador"></div>
+          <!-- EDITABLE: dedicatoria de la contraportada -->
+          <p class="contraportada-texto">
+            Cada foto es un mes que<br/>
+            elegí vivir contigo.<br/>
+            Gracias por ser mi historia favorita.
+          </p>
+          <div class="portada-separador"></div>
+          <p class="portada-nombres" style="font-size:1rem;">Con amor, Harol 🌹</p>
+        </div>
+      </div>
+
+      <div class="album-sombra"></div>
+    </div>
+  </div>
+
+  <div class="album-nav">
+    <button class="album-btn" id="album-prev" onclick="albumNav(-1)" disabled>&#8249;</button>
+    <div class="album-puntos" id="album-puntos"></div>
+    <button class="album-btn" id="album-next" onclick="albumNav(1)">&#8250;</button>
+  </div>
+</section>
+
+<!-- ====================================================
+     CARTA — clic en el sobre para abrirla
+     EDITABLE: párrafos dentro de .carta-contenido
+==================================================== -->
+<section id="carta">
+  <p class="seccion-label reveal">✦ Solo para ti ✦</p>
+  <h2 class="reveal" style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-style:italic;margin-bottom:2rem;">
+    Una carta de mi corazón
+  </h2>
+
+  <div class="sobre-wrapper reveal" onclick="abrirCarta()">
+    <svg class="sobre" viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="20" width="116" height="58" rx="6" fill="#1a0810" stroke="#c0395a" stroke-width="1.5"/>
+      <polygon points="2,20 60,55 118,20" fill="#2a0d1a" stroke="#c0395a" stroke-width="1.5"/>
+      <polygon points="2,78 40,48 2,20" fill="#200a14" stroke="#c0395a" stroke-width="1"/>
+      <polygon points="118,78 80,48 118,20" fill="#200a14" stroke="#c0395a" stroke-width="1"/>
+      <text x="60" y="68" text-anchor="middle" fill="#d4a853" font-size="14">💌</text>
+    </svg>
+    <p class="sobre-hint">Haz clic para abrir ✦</p>
+  </div>
+
+  <div class="carta-contenido" id="carta-contenido">
+    <!-- ================================================
+         EDITABLE — Escribe aquí tu carta para Karina
+    ================================================ -->
+    <p>Mi amor,</p>
+
+    <p><!-- EDITABLE: primer párrafo -->
+      Han pasado dos años desde que mi vida cambió para siempre contigo. Dos años llenos de risas, de abrazos, de miradas que dicen lo que las palabras no alcanzan.
+    </p>
+
+    <p><!-- EDITABLE: segundo párrafo -->
+      Cada día a tu lado es un regalo que no me canso de recibir. Gracias por tu paciencia, por tu amor, por ser exactamente quien eres.
+    </p>
+
+    <p><!-- EDITABLE: tercer párrafo — el más personal -->
+      Hay momentos que guardo en el corazón y que no cambiaría por nada en el mundo. Esos momentos son los que me recuerdan lo afortunado que soy de tenerte.
+    </p>
+
+    <p><!-- EDITABLE: cierre -->
+      No me imagino una vida sin ti, eres todo lo que quiero y necesito, eres todo y una parte fundamental en mi vida, te amo muchisimo amor, por muchos mas años juntos mi amor, te amo hoy, mañan y siempre.
+    </p>
+
+    <!-- EDITABLE: firma -->
+    <p class="firma">Con todo mi amor, Harol 🌹</p>
+  </div>
+</section>
+
+<!-- ====================================================
+     VIDEO ESPECIAL
+     EDITABLE: cambia el src del <source> por otro video
+==================================================== -->
+<section id="video-seccion">
+  <p class="seccion-label reveal">✦ Un momento especial ✦</p>
+  <h2 class="reveal">Nuestro resumen</h2>
+  <br/>
+  <div class="video-container reveal">
+    <video controls loop>
+      <source src="imagenes/aniversario xd ‐ Hecho con Clipchamp.mp4" type="video/mp4">
+      Tu navegador no soporta videos HTML5.
+    </video>
+  </div>
+</section>
+
+<!-- ====================================================
+     BOTÓN LLUVIA DE CORAZONES
+==================================================== -->
+<section id="seccion-amor">
+  <p class="seccion-label reveal">✦ Dos años, un amor ✦</p>
+  <br/>
+  <!-- EDITABLE: texto del botón -->
+  <button class="boton-amor reveal" onclick="lluviaCorazones()">
+    ❤️ &nbsp; Te Amo, Amor &nbsp; ❤️
+  </button>
+</section>
+
+<!-- ====================================================
+     FOOTER
+     EDITABLE: nombres y fecha
+==================================================== -->
+<footer>
+  <p class="grande">Karina &amp; Harol</p>
+  <p>✦ &nbsp; Segundo aniversario  25 de junio, 2026 &nbsp; ✦</p>
+  <br/>
+  <p>Hecho con ❤️ para ti</p>
+</footer>
+
+<script>
+  // ================================================
+  // EDITABLE — Fecha de inicio de la relación
+  // new Date(AÑO, MES-1, DIA, HORA, MINUTOS)
+  // ================================================
+  const FECHA_INICIO = new Date(2024, 5, 25, 0, 0, 0);
+
+  // ── Cursor corazón ──
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+
+  // Rastro de corazones
+  let lastTrail = 0;
+  document.addEventListener('mousemove', e => {
+    if (Date.now() - lastTrail < 90) return;
+    lastTrail = Date.now();
+    const h = document.createElement('div');
+    h.textContent = ['❤️','💕','💗','🌹'][Math.floor(Math.random()*4)];
+    h.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;
+      font-size:${12+Math.random()*10}px;pointer-events:none;z-index:9998;
+      transform:translate(-50%,-50%);animation:floatUp 1s ease forwards;`;
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 1000);
+  });
+
+  // ── Canvas: pétalos de rosa ──
+  const canvas = document.getElementById('canvas-petals');
+  const ctx    = canvas.getContext('2d');
+
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const PETALS = Array.from({length: 30}, () => ({
+    x:     Math.random() * window.innerWidth,
+    y:     Math.random() * window.innerHeight * -1,
+    size:  10 + Math.random() * 18,
+    speed: 0.6 + Math.random() * 1.2,
+    drift: (Math.random() - 0.5) * 0.8,
+    angle: Math.random() * Math.PI * 2,
+    spin:  (Math.random() - 0.5) * 0.03,
+    alpha: 0.4 + Math.random() * 0.5,
+  }));
+
+  function drawPetal(x, y, size, angle, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(size*.5, -size*.8, size, -size*.5, size*.5, 0);
+    ctx.bezierCurveTo(size, size*.5, size*.5, size*.8, 0, 0);
+    const g = ctx.createRadialGradient(size*.3, -size*.2, 0, size*.3, -size*.2, size);
+    g.addColorStop(0,   '#ff6b8a');
+    g.addColorStop(0.5, '#c0395a');
+    g.addColorStop(1,   '#7a1530');
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  (function animatePetals() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    PETALS.forEach(p => {
+      p.y += p.speed; p.x += p.drift; p.angle += p.spin;
+      if (p.y > canvas.height + 50) { p.y = -50; p.x = Math.random() * canvas.width; }
+      drawPetal(p.x, p.y, p.size, p.angle, p.alpha);
+    });
+    requestAnimationFrame(animatePetals);
+  })();
+
+
+  // ── Contador en tiempo real ──
+  function actualizarContador() {
+    const ahora = new Date();
+    let y  = ahora.getFullYear() - FECHA_INICIO.getFullYear();
+    let mo = ahora.getMonth()    - FECHA_INICIO.getMonth();
+    let d  = ahora.getDate()     - FECHA_INICIO.getDate();
+    let h  = ahora.getHours()    - FECHA_INICIO.getHours();
+    let mi = ahora.getMinutes()  - FECHA_INICIO.getMinutes();
+    let s  = ahora.getSeconds()  - FECHA_INICIO.getSeconds();
+
+    if (s  < 0) { s  += 60; mi--; }
+    if (mi < 0) { mi += 60; h--;  }
+    if (h  < 0) { h  += 24; d--;  }
+    if (d  < 0) { d  += new Date(ahora.getFullYear(), ahora.getMonth(), 0).getDate(); mo--; }
+    if (mo < 0) { mo += 12; y--;  }
+
+    document.getElementById('cnt-years').textContent   = y;
+    document.getElementById('cnt-months').textContent  = mo;
+    document.getElementById('cnt-days').textContent    = d;
+    document.getElementById('cnt-hours').textContent   = String(h).padStart(2,'0');
+    document.getElementById('cnt-minutes').textContent = String(mi).padStart(2,'0');
+    document.getElementById('cnt-seconds').textContent = String(s).padStart(2,'0');
+  }
+  actualizarContador();
+  setInterval(actualizarContador, 1000);
+
+  // ── Álbum de fotos ──
+  const paginas   = Array.from(document.querySelectorAll('.album-pagina'));
+  const puntosEl  = document.getElementById('album-puntos');
+  const btnPrev   = document.getElementById('album-prev');
+  const btnNext   = document.getElementById('album-next');
+  let paginaActual = 0;
+  let animando     = false;
+
+  // Crear puntos de navegación
+  paginas.forEach((_, i) => {
+    const p = document.createElement('div');
+    p.className = 'album-punto' + (i === 0 ? ' activo' : '');
+    p.onclick = () => albumIrA(i);
+    puntosEl.appendChild(p);
+  });
+
+  function albumNav(dir) {
+    const siguiente = paginaActual + dir;
+    if (siguiente < 0 || siguiente >= paginas.length || animando) return;
+    albumIrA(siguiente, dir);
+  }
+
+  function albumIrA(idx, dir) {
+    if (idx === paginaActual || animando) return;
+    animando = true;
+    dir = dir ?? (idx > paginaActual ? 1 : -1);
+
+    const saliente  = paginas[paginaActual];
+    const entrante  = paginas[idx];
+    const clsSalida = dir > 0 ? 'saliendo-izq' : 'saliendo-der';
+    const clsEntrada = dir > 0 ? 'entrando-der' : 'entrando-izq';
+
+    // Prepara entrante fuera de vista
+    entrante.classList.remove('activa', 'saliendo-izq', 'saliendo-der', 'entrando-izq', 'entrando-der');
+    entrante.classList.add(clsEntrada);
+    entrante.style.opacity = '0';
+
+    // Pequeño delay para que el navegador pinte la posición inicial
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Activa transición del entrante
+        entrante.style.opacity = '';
+        entrante.classList.remove(clsEntrada);
+        entrante.classList.add('activa');
+
+        // Sale el actual
+        saliente.classList.remove('activa');
+        saliente.classList.add(clsSalida);
+
+        setTimeout(() => {
+          saliente.classList.remove(clsSalida);
+          paginaActual = idx;
+          animando = false;
+
+          // Actualiza puntos
+          document.querySelectorAll('.album-punto').forEach((p, i) =>
+            p.classList.toggle('activo', i === paginaActual));
+
+          // Actualiza botones
+          btnPrev.disabled = paginaActual === 0;
+          btnNext.disabled = paginaActual === paginas.length - 1;
+        }, 720);
+      });
+    });
+  }
+
+  // Soporte teclado en la sección del álbum
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft')  albumNav(-1);
+    if (e.key === 'ArrowRight') albumNav(1);
+  });
+
+  // Soporte swipe táctil
+  let touchStartX = 0;
+  document.getElementById('album-libro').addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  document.getElementById('album-libro').addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) albumNav(dx < 0 ? 1 : -1);
+  });
+
+  // ── Carta ──
+  function abrirCarta() {
+    document.querySelector('.sobre-wrapper').style.display = 'none';
+    document.getElementById('carta-contenido').classList.add('visible');
+  }
+
+  // ── Lluvia de corazones ──
+  function lluviaCorazones() {
+    const emojis = ['❤️','💕','💗','💖','💝','🌹','✨','💫'];
+    for (let i = 0; i < 60; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.cssText = `position:fixed;left:${Math.random()*100}vw;top:-50px;
+          font-size:${20+Math.random()*30}px;pointer-events:none;z-index:9997;
+          animation:caer ${1.5+Math.random()*2}s ease forwards;`;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 4000);
+      }, i * 50);
+    }
+  }
+
+  // ── Reveal on scroll ──
+  const revealObs = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.12 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+</script>
+</body>
+</html>
